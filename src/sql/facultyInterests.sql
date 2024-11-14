@@ -1,3 +1,6 @@
+-- Created by:
+-- 11/14/2024
+
 -- CREATING THE DATABASE
 DROP DATABASE IF EXISTS faculty_research_group5;
 CREATE DATABASE faculty_research_group5;
