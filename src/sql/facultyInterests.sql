@@ -34,7 +34,7 @@ CREATE TABLE faculty (
     abstract_id INT,
     department VARCHAR(100),
     building VARCHAR(100),
-	office VARCHAR(6),
+	office VARCHAR(30),
     email VARCHAR(50) UNIQUE,
     password VARCHAR(255),
     interests VARCHAR(100),
