@@ -9,7 +9,7 @@ public class MainApplication {
 
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "password")) {
+                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "student")) {
 
             int choice;
             do {
@@ -25,12 +25,15 @@ public class MainApplication {
                         register(connection);
                         break;
                     case 3:
+                        searchFacultyInterests(connection, "cleclerc@rit.edu");
+                        break;
+                    case 4:
                         System.out.println("Exiting program. Goodbye!");
                         break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } while (choice != 3);
+            } while (choice != 4);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -41,7 +44,8 @@ public class MainApplication {
         System.out.println("\n--- Faculty Research Project ---");
         System.out.println("1 - Login");
         System.out.println("2 - Register");
-        System.out.println("3 - Quit");
+        System.out.println("3 - Search Faculty Interests Test");
+        System.out.println("4 - Quit");
         System.out.print("Enter your choice: ");
     }
 
@@ -327,4 +331,56 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
+
+    private static void searchFacultyInterests(Connection connection, String email){
+        String sql = """
+            SELECT 
+                f.name AS faculty_name,
+                f.building AS building_number,
+                f.office AS office_number,
+                f.email AS faculty_email,
+            GROUP_CONCAT(i.interest ORDER BY i.interest) AS common_interests
+            FROM faculty f
+            JOIN faculty_interests fi USING (faculty_id)
+            JOIN interests i USING (interest_id)
+            JOIN faculty_abstract fa USING (abstract_id)
+            JOIN student_interests si USING (interest_id)
+            JOIN students s USING (student_id)
+            WHERE s.email = ? AND fa.abstract LIKE CONCAT('%', i.interest, '%')
+            GROUP BY f.faculty_id, f.name, f.building, f.office, f.email
+            ORDER BY f.name;
+            """;
+                    
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, email);  
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("No faculty found with common interests for this student.");
+                    return;
+                }
+                do {
+                    String facultyName = rs.getString("faculty_name");
+                    String buildingNumber = rs.getString("building_number");
+                    String officeNumber = rs.getString("office_number");
+                    String facultyEmail = rs.getString("faculty_email");
+                    String commonInterests = rs.getString("common_interests");
+                    
+                    System.out.println("Faculty Name: " + facultyName);
+                    System.out.println("Building Number: " + buildingNumber);
+                    System.out.println("Office Number: " + officeNumber);
+                    System.out.println("Faculty Email: " + facultyEmail);
+                    System.out.println("Common Interests: " + commonInterests);
+                    System.out.println("----------------------------------------");
+                } while (rs.next());
+                
+            } catch (SQLException e) {
+                System.out.println("Error executing query: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            System.out.println("Error preparing or executing the statement: " + e.getMessage());
+        }
+    }
 }
+
