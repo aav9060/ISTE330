@@ -347,7 +347,7 @@ public class MainApplication {
                 default:
                     System.out.println("Invalid choice. Please try again.");
             }
-        } while (choice != 4);
+        } while (choice != 5);
     }
 
     private static void registerPublic(Connection connection) {
