@@ -9,7 +9,7 @@ public class MainApplication {
 
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "password")) {
+                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "Haikyuu05")) {
 
             int choice;
             do {
@@ -76,7 +76,9 @@ public class MainApplication {
                     studentMenu(connection, email);
                 } else if ("Public".equalsIgnoreCase(userType)) {
                     publicMenu(connection, email);
-                } else {
+                } else if ("Faculty".equalsIgnoreCase(userType)) {
+                    facultyMenu(connection, email);
+                }else {
                     System.out.println("Other user type is not yet implemented.");
                 }
             } else {
@@ -98,7 +100,7 @@ public class MainApplication {
 
         switch (userType) {
             case 1:
-                System.out.println("Faculty registration is not yet implemented.");
+                registerFaculty(connection);
                 break;
             case 2:
                 registerStudent(connection);
@@ -643,5 +645,348 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
+    private static void displayFacultyMenu() {
+        System.out.println("\n--- Faculty Menu ---");
+        System.out.println("1 - Search Student Interests");
+        System.out.println("2 - Insert Abstracts or Interests");
+        System.out.println("3 - Update Abstracts or Interests");
+        System.out.println("4 - Delete Abstracts or Interests");
+        System.out.println("5 - See Own Interests");
+        System.out.println("6 - See Own Abstracts");
+        System.out.println("7 - Quit");
+    }
+    private static void registerFaculty(Connection connection) {
+        System.out.print("\nEnter Your Full Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Your Department: ");
+        String department = scanner.nextLine();
+        System.out.print("Enter Your Building: ");
+        String building = scanner.nextLine();
+        System.out.print("Enter Your Office Number: ");
+        String office = scanner.nextLine();
+        System.out.print("Enter Your Faculty Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter Your Password: ");
+        String password = scanner.nextLine();
+        System.out.print("Enter Your Abstract ID (press enter for no abstracts): ");
+        String abstractIdInput = scanner.nextLine();
+        Integer abstractId = abstractIdInput.isEmpty() ? null : Integer.parseInt(abstractIdInput);
+    
+        try {
+            connection.setAutoCommit(false);
+    
+            // Insert into account table
+            String insertAccount = "INSERT INTO account (email, password, type) VALUES (?, ?, 'Faculty')";
+            try (PreparedStatement pstmtAccount = connection.prepareStatement(insertAccount)) {
+                pstmtAccount.setString(1, email);
+                pstmtAccount.setString(2, password);
+                pstmtAccount.executeUpdate();
+            }
+    
+            // Insert into faculty table
+            String insertFaculty = "INSERT INTO faculty (name, abstract_id, department, building, office, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            try (PreparedStatement pstmtFaculty = connection.prepareStatement(insertFaculty)) {
+                pstmtFaculty.setString(1, name);
+                pstmtFaculty.setObject(2, abstractId, java.sql.Types.INTEGER); // Handles null correctly
+                pstmtFaculty.setString(3, department);
+                pstmtFaculty.setString(4, building);
+                pstmtFaculty.setString(5, office);
+                pstmtFaculty.setString(6, email);
+                pstmtFaculty.setString(7, password);
+                pstmtFaculty.executeUpdate();
+            }
+    
+            connection.commit();
+            System.out.println("Faculty registration successful!");
+        } catch (SQLException e) {
+            System.out.println("Failed to register faculty. Error: " + e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                System.out.println("Failed to rollback transaction. Error: " + rollbackEx.getMessage());
+            }
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                System.out.println("Failed to set auto commit. Error: " + ex.getMessage());
+            }
+        }
+    }    
+    public static void facultyMenu(Connection connection, String email) {
+        int choice;
+        do {
+            displayFacultyMenu();
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
 
+            switch (choice) {
+                case 1:
+                    System.out.println("Common Student Interests with Faculty is not yet implemented.");
+                    break;
+                case 2:
+                    insertFacultyAbstractsOrInterests(connection);
+                    break;
+                case 3:
+                    updateFacultyAbstractsOrInterests(connection);
+                    break;
+                case 4:
+                    deleteFacultyAbstractsOrInterests(connection);
+                    break;
+                case 5:
+                    seeFacultyInterests(connection, email);
+                    break;
+                case 6:
+                    seeFacultyAbstracts(connection, email);
+                    break;                                      
+                case 7:
+                    System.out.println("Logging out and returning to main menu...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        } while (choice != 7);
+    }
+
+    private static void insertFacultyAbstractsOrInterests(Connection connection) {
+        System.out.println("\nChoose an option:");
+        System.out.println("1 - Insert an Abstract");
+        System.out.println("2 - Insert an Interest");
+        System.out.print("Enter your choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        switch (choice) {
+            case 1:
+                insertFacultyAbstract(connection);
+                break;
+            case 2:
+                insertFacultyInterest(connection);
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                break;
+        }
+    }
+
+    private static void insertFacultyAbstract(Connection connection) {
+        System.out.print("Enter title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter abstract: ");
+        String abstractText = scanner.nextLine();
+
+        String sql = "INSERT INTO faculty_abstract (title, abstract) VALUES (?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, title);
+            statement.setString(2, abstractText);
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("A new abstract was inserted successfully!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to insert the abstract.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void insertFacultyInterest(Connection connection) {
+        System.out.print("Enter interest: ");
+        String interest = scanner.nextLine();
+
+        String sql = "INSERT INTO interests (interest) VALUES (?)";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, interest);
+            int rowsInserted = statement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("A new interest was inserted successfully!");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to insert the interest.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void updateFacultyAbstractsOrInterests(Connection connection) {
+        System.out.println("\nChoose an option:");
+        System.out.println("1 - Update an Abstract");
+        System.out.println("2 - Update an Interest");
+        System.out.print("Enter your choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        switch (choice) {
+            case 1:
+                updateFacultyAbstract(connection);
+                break;
+            case 2:
+                updateFacultyInterest(connection);
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                break;
+        }
+    }
+
+    private static void updateFacultyAbstract(Connection connection) {
+        System.out.print("Enter Abstract ID: ");
+        int abstractId = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+        System.out.print("Enter new title: ");
+        String title = scanner.nextLine();
+        System.out.print("Enter new abstract: ");
+        String abstractText = scanner.nextLine();
+
+        String sql = "UPDATE faculty_abstract SET title = ?, abstract = ? WHERE abstract_ID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, title);
+            statement.setString(2, abstractText);
+            statement.setInt(3, abstractId);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Abstract updated successfully!");
+            } else {
+                System.out.println("No abstract found with the specified ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to update the abstract.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void updateFacultyInterest(Connection connection) {
+        System.out.print("Enter Interest ID: ");
+        int interestId = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+        System.out.print("Enter new interest: ");
+        String interest = scanner.nextLine();
+
+        String sql = "UPDATE interests SET interest = ? WHERE interest_ID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, interest);
+            statement.setInt(2, interestId);
+            int rowsUpdated = statement.executeUpdate();
+            if (rowsUpdated > 0) {
+                System.out.println("Interest updated successfully!");
+            } else {
+                System.out.println("No interest found with the specified ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to update the interest.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void deleteFacultyAbstractsOrInterests(Connection connection) {
+        System.out.println("\nChoose an option:");
+        System.out.println("1 - Delete an Abstract");
+        System.out.println("2 - Delete an Interest");
+        System.out.print("Enter your choice: ");
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // consume newline
+
+        switch (choice) {
+            case 1:
+                deleteFacultyAbstract(connection);
+                break;
+            case 2:
+                deleteFacultyInterest(connection);
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+                break;
+        }
+    }
+
+    private static void deleteFacultyAbstract(Connection connection) {
+        System.out.print("Enter Abstract ID: ");
+        int abstractId = scanner.nextInt();
+
+        String sql = "DELETE FROM faculty_abstract WHERE abstract_ID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, abstractId);
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Abstract deleted successfully!");
+            } else {
+                System.out.println("No abstract found with the specified ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to delete the abstract.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void deleteFacultyInterest(Connection connection) {
+        System.out.print("Enter Interest ID: ");
+        int interestId = scanner.nextInt();
+
+        String sql = "DELETE FROM interests WHERE interest_ID = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, interestId);
+            int rowsDeleted = statement.executeUpdate();
+            if (rowsDeleted > 0) {
+                System.out.println("Interest deleted successfully!");
+            } else {
+                System.out.println("No interest found with the specified ID.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to delete the interest.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void seeFacultyInterests(Connection connection, String email) {
+        String sql = "SELECT GROUP_CONCAT(interests.interest SEPARATOR ' | ') AS interests_list " +
+                     "FROM interests " +
+                     "JOIN faculty_interests ON interests.interest_ID = faculty_interests.interest_ID " +
+                     "JOIN faculty ON faculty.faculty_id = faculty_interests.faculty_ID " +
+                     "WHERE faculty.email = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String interestsList = resultSet.getString("interests_list");
+                if (interestsList == null || interestsList.isEmpty()) {
+                    System.out.println("No interests found for this faculty member.");
+                } else {
+                    System.out.println("Interests: " + interestsList);
+                }
+            } else {
+                System.out.println("No interests found for this faculty member.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve interests.");
+            e.printStackTrace();
+        }
+    }
+
+    private static void seeFacultyAbstracts(Connection connection, String email) {
+        System.out.println("\n--- View Your Abstracts ---");
+        String sql = "SELECT faculty_abstract.abstract_ID, title, abstract " +
+                     "FROM faculty_abstract " +
+                     "JOIN faculty ON faculty.abstract_id = faculty_abstract.abstract_ID " +
+                     "WHERE faculty.email = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("No abstracts found.");
+            } else {
+                while (resultSet.next()) {
+                    int abstractId = resultSet.getInt("abstract_ID");
+                    String title = resultSet.getString("title");
+                    String abstractText = resultSet.getString("abstract");
+                    System.out.println("Abstract ID: " + abstractId);
+                    System.out.println("Title: " + title);
+                    System.out.println("Abstract: " + abstractText);
+                    System.out.println("-------------------------------");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Failed to retrieve abstracts: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }                 
 }
