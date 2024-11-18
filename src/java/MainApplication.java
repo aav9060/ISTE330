@@ -28,12 +28,18 @@ public class MainApplication {
                         searchFacultyInterests(connection, "cleclerc@rit.edu");
                         break;
                     case 4:
+                        searchFacultyAbstract(connection, "Jython");
+                        break;
+                    case 5: 
+                        searchStudentInterests(connection);
+                        break;
+                    case 6:
                         System.out.println("Exiting program. Goodbye!");
                         break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } while (choice != 4);
+            } while (choice != 6);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -45,7 +51,9 @@ public class MainApplication {
         System.out.println("1 - Login");
         System.out.println("2 - Register");
         System.out.println("3 - Search Faculty Interests Test");
-        System.out.println("4 - Quit");
+        System.out.println("4 - Search Faculty Abstract test");
+         System.out.println("5 - Search Student Interests");
+        System.out.println("6 - Quit");
         System.out.print("Enter your choice: ");
     }
 
@@ -351,7 +359,6 @@ public class MainApplication {
             ORDER BY f.name;
             """;
                     
-
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);  
             
@@ -379,8 +386,100 @@ public class MainApplication {
                 System.out.println("Error executing query: " + e.getMessage());
             }
         } catch (SQLException e) {
-            System.out.println("Error preparing or executing the statement: " + e.getMessage());
+            System.out.println("Error preparing statement: " + e.getMessage());
         }
+    }
+
+    private static void searchFacultyAbstract(Connection connection, String searchTerm) {
+        String sql = """
+            SELECT 
+                f.name AS faculty_name
+            FROM faculty f
+            JOIN faculty_abstract fa USING (abstract_id)
+            WHERE fa.abstract LIKE ?
+            ORDER BY f.name;
+            """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + searchTerm + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("No faculty abstracts found matching the search term.");
+                    return;
+                }
+                do {
+                    String facultyName = rs.getString("faculty_name");
+                    System.out.println(facultyName);
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                System.out.println("Error executing query: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error preparing statement: " + e.getMessage());
+        }
+    }
+    private static void searchStudentInterests(Connection connection) {
+        // Select statement for available interests
+        String sql = """
+            SELECT *
+            FROM interests;
+            """;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while(rs.next()){
+                String interestID = String.valueOf(rs.getInt("interest_ID"));
+                String interest = rs.getString("interest");
+                System.out.println(interestID + " - " + interest);
+            }
+
+        }catch (SQLException e) {
+            System.out.println("Error preparing" + e.getMessage());
+        }// end of interests statement
+        
+        // Get interest ID input
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Interest #: ");
+        int number = scanner.nextInt();
+
+        // Select statement for students with inputted interest ID
+        String sql1 = """
+            SELECT s.name, s.email, s.phone
+            FROM students s
+            JOIN student_interests USING (student_id)
+            JOIN interests USING (interest_id)
+            WHERE interest_id = ?
+            """;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql1)) {
+            pstmt.setInt(1, number);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("No students with matching interest.");
+                    return;
+                }
+                do {
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String phone = rs.getString("phone");
+
+                    System.out.println("Student(s) with interest ID " + String.valueOf(number) + "\n");
+                    System.out.println("Name: " + name);
+                    System.out.println("Email: " + email);
+                    System.out.println("Phone: " + phone);
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                System.out.println("Error executing query: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error preparing statement:" + e.getMessage());
+        }
+        
     }
 }
 
