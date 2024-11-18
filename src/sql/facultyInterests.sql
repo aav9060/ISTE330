@@ -1,3 +1,7 @@
+--  ISTE 330 Deliverable 2 Data Layer
+--  Meetings + Planning + Development Began 11/8/2024
+--  Alex Vasilcoiu,  Noella Abraham, Sondos Sosak, Daniyah Wong, Jason Wu
+
 -- CREATING THE DATABASE
 DROP DATABASE IF EXISTS faculty_research_group5;
 CREATE DATABASE faculty_research_group5;
