@@ -1,4 +1,6 @@
-// Created on 11/17/2024
+//  ISTE 330 Deliverable 2 Data Layer
+//  Meetings + Planning + Development Began 11/8/2024
+//  Alex Vasilcoiu,  Noella Abraham, Sondos Sosak, Daniyah Wong, Jason Wu
 
 import java.sql.*;
 import java.util.Scanner;
