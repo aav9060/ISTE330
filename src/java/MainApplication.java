@@ -19,7 +19,7 @@ public class MainApplication {
     
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "Haikyuu05")) {
+                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "student")) {
 
             int choice;
             do {
@@ -595,12 +595,6 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
-
-
-    
-    
-    
-    
 
 
     
