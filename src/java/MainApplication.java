@@ -25,21 +25,16 @@ public class MainApplication {
                         register(connection);
                         break;
                     case 3:
-                        searchFacultyInterests(connection, "cleclerc@rit.edu");
-                        break;
-                    case 4:
                         searchFacultyAbstract(connection, "Jython");
                         break;
-                    case 5:
-                        searchStudentInterests(connection);
-                        break;
-                    case 6:
+                        
+                    case 4:
                         System.out.println("Exiting program. Goodbye!");
                         break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
-            } while (choice != 6);
+            } while (choice != 4);
 
         } catch (SQLException e) {
             System.out.println("Error: Unable to establish a database connection.");
@@ -50,10 +45,8 @@ public class MainApplication {
         System.out.println("\n--- Faculty Research Project ---");
         System.out.println("1 - Login");
         System.out.println("2 - Register");
-        System.out.println("3 - Search Faculty Interests Test");
-        System.out.println("4 - Search Faculty Abstract Test");
-        System.out.println("5 - Search Student Interests");
-        System.out.println("6 - Quit");
+        System.out.println("3 - Search Faculty Abstract Test");
+        System.out.println("4 - Quit");
         System.out.print("Enter your choice: ");
     }
     private static void login(Connection connection) {
@@ -175,7 +168,7 @@ public class MainApplication {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Common Faculty Interests with Students is not yet implemented.");
+                    searchFacultyInterests(connection, email);
                     break;
                 case 2:
                     viewOwnStudentInterests(connection, email);
@@ -723,7 +716,7 @@ public class MainApplication {
 
             switch (choice) {
                 case 1:
-                    System.out.println("Common Student Interests with Faculty is not yet implemented.");
+                    searchStudentInterests(connection);
                     break;
                 case 2:
                     insertFacultyAbstractsOrInterests(connection);
