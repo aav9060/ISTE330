@@ -9,7 +9,7 @@ public class MainApplication {
 
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "student")) {
+                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "BabySatan22081!!!!")) {
 
             int choice;
             do {
@@ -412,7 +412,7 @@ public class MainApplication {
     }
 
     private static void searchForInterest(Connection connection) {
-        System.out.println("This has not been implemented yet.");
+        searchInterests(connection);
     }
 
     private static void viewSelfPublicInterest(Connection connection, String email) {
@@ -750,5 +750,5 @@ public class MainApplication {
             System.out.println("Error preparing statement:" + e.getMessage());
         }
     }
-    
+
 }
