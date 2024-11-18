@@ -11,7 +11,7 @@ public class MainApplication {
 
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "Haikyuu05")) {
+                "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "student")) {
 
             int choice;
             do {
@@ -27,7 +27,7 @@ public class MainApplication {
                         register(connection);
                         break;
                     case 3:
-                        searchFacultyAbstract(connection, "Jython");
+                        searchFacultyAbstract(connection);
                         break;
                         
                     case 4:
@@ -553,7 +553,7 @@ public class MainApplication {
         }
     }
 
-    private static void searchFacultyAbstract(Connection connection, String searchTerm) {
+    private static void searchFacultyAbstract(Connection connection) {
         String sql = 
             "SELECT " +
             "f.name AS faculty_name " +
@@ -561,6 +561,11 @@ public class MainApplication {
             "JOIN faculty_abstract fa USING (abstract_id) " +
             "WHERE fa.abstract LIKE ? " +
             "ORDER BY f.name";
+
+        // Get user input for search term
+        System.out.print("Enter search term: ");
+        String searchTerm = scanner.next();
+        scanner.nextLine(); 
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + searchTerm + "%");
@@ -598,7 +603,7 @@ public class MainApplication {
 
         System.out.print("Enter Interest ID to search for students: ");
         int interestId = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        scanner.nextLine(); 
 
         String sql1 = 
             "SELECT s.name, s.email, s.phone " +
