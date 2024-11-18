@@ -652,4 +652,103 @@ public class MainApplication {
         }
 
     }
+
+    private static void searchInterests(Connection connection) {
+        // Select statement for available interests
+        String sql = """
+            SELECT *
+            FROM interests;
+            """;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                String interestID = String.valueOf(rs.getInt("interest_ID"));
+                String interest = rs.getString("interest");
+                System.out.println(interestID + " - " + interest);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error preparing" + e.getMessage());
+        }// end of interests statement
+
+        // Get interest ID input
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Interest #: ");
+        int number = scanner.nextInt();
+
+        // Select statement for students with inputted interest ID
+        String sql1 = """
+            SELECT s.name, s.email, s.phone
+            FROM students s
+            JOIN student_interests USING (student_id)
+            JOIN interests USING (interest_id)
+            WHERE interest_id = ?
+            """;
+        // Students
+        try (PreparedStatement pstmt = connection.prepareStatement(sql1)) {
+            pstmt.setInt(1, number);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (!rs.next()) {
+                    System.out.println("No students with matching interest.");
+                    return;
+                }
+                System.out.println("\n--------Students--------\n");
+                do {
+                    String name = rs.getString("name");
+                    String email = rs.getString("email");
+                    String phone = rs.getString("phone");
+
+                    System.out.println("Name: " + name);
+                    System.out.println("Email: " + email);
+                    System.out.println("Phone: " + phone + "\n");
+                } while (rs.next());
+
+            } catch (SQLException e) {
+                System.out.println("Error executing query: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error preparing statement:" + e.getMessage());
+        }
+
+        // faculty
+        String sql2 = """
+            SELECT f.name, f.email, f.building, f.office
+            FROM faculty f 
+            JOIN faculty_interests USING (faculty_id)
+            JOIN interests USING (interest_id)
+            WHERE interest_id = ?
+        """;
+
+        try (PreparedStatement pstmt2 = connection.prepareStatement(sql2)) {
+            pstmt2.setInt(1, number);
+
+            try (ResultSet rs2 = pstmt2.executeQuery()) {
+                if (!rs2.next()) {
+                    System.out.println("No students with matching interest.");
+                    return;
+                }
+                System.out.println("\n--------Faculty--------\n");
+                do {
+                    String name = rs2.getString("name");
+                    String email = rs2.getString("email");
+                    String building = rs2.getString("building");
+                    String office = rs2.getString("office");
+
+                    System.out.println("Name: " + name);
+                    System.out.println("Email: " + email);
+                    System.out.println("Building: " + building);
+                    System.out.println("Office: " + office + "\n");
+                } while (rs2.next());
+
+            } catch (SQLException e) {
+                System.out.println("Error executing query: " + e.getMessage());
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error preparing statement:" + e.getMessage());
+        }
+    }
+    
 }
