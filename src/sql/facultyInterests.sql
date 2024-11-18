@@ -52,6 +52,7 @@ CREATE TABLE public (
     public_id INT PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(50),
     address VARCHAR(100),
+    email VARCHAR(50) UNIQUE,
     interest_id INT,
     FOREIGN KEY (interest_id) REFERENCES interests(interest_ID)
         ON DELETE CASCADE 
@@ -104,8 +105,8 @@ INSERT INTO account (email, password, type) VALUES
 ('jbond@gmail.com', 'public123', 'Public');
 
 -- INSERTING INTO PUBLIC USERS TABLE
-INSERT INTO public (name, address, interest_id) VALUES 
-('James Bond', '777 Wow St', 1);
+INSERT INTO public (name, address, email, interest_id) VALUES 
+('James Bond', '777 Wow St', 'jbond@gmail.com', 1);
 
 -- INSERTING INTO ABSTRACTS TABLE
 INSERT INTO faculty_abstract (title, abstract) VALUES 

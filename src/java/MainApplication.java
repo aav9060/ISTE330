@@ -30,7 +30,7 @@ public class MainApplication {
                     case 4:
                         searchFacultyAbstract(connection, "Jython");
                         break;
-                    case 5: 
+                    case 5:
                         searchStudentInterests(connection);
                         break;
                     case 6:
@@ -52,7 +52,7 @@ public class MainApplication {
         System.out.println("2 - Register");
         System.out.println("3 - Search Faculty Interests Test");
         System.out.println("4 - Search Faculty Abstract test");
-         System.out.println("5 - Search Student Interests");
+        System.out.println("5 - Search Student Interests");
         System.out.println("6 - Quit");
         System.out.print("Enter your choice: ");
     }
@@ -75,8 +75,10 @@ public class MainApplication {
 
                 if ("Student".equalsIgnoreCase(userType)) {
                     studentMenu(connection, email);
+                } else if ("Public".equalsIgnoreCase(userType)) {
+                    publicMenu(connection, email);
                 } else {
-                    System.out.println("Other user types are not yet implemented.");
+                    System.out.println("Other user type is not yet implemented.");
                 }
             } else {
                 System.out.println("Invalid email or password. Please try again.");
@@ -103,7 +105,7 @@ public class MainApplication {
                 registerStudent(connection);
                 break;
             case 3:
-                System.out.println("Public user registration is not yet implemented.");
+                registerPublic(connection);
                 break;
             default:
                 System.out.println("Invalid user type. Returning to main menu.");
@@ -317,6 +319,174 @@ public class MainApplication {
         }
     }
 
+    // BEGIN Public Users
+    private static void registerPublic(Connection connection) {
+        System.out.print("\nEnter Your Name or Your Business's Name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter Your Address: ");
+        String address = scanner.nextLine();
+        System.out.print("Enter Your Email: ");
+        String email = scanner.nextLine();
+        System.out.print("Enter Your Password: ");
+        String password = scanner.nextLine();
+
+        String interest = "";
+
+        try {
+            connection.setAutoCommit(false);
+
+            String insertAccount = "INSERT INTO account (email, password, type) VALUES (?, ?, 'Student')";
+            try (PreparedStatement pstmt = connection.prepareStatement(insertAccount)) {
+                pstmt.setString(1, email);
+                pstmt.setString(2, password);
+                pstmt.executeUpdate();
+            }
+
+            String insertStudent = "INSERT INTO public (name, address, interest) VALUES (?, ?, ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(insertStudent)) {
+                pstmt.setString(1, name);
+                pstmt.setString(2, address);
+                pstmt.setString(3, interest);
+
+                pstmt.executeUpdate();
+            }
+
+            connection.commit();
+            System.out.println("Public registration successful!");
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackEx) {
+                rollbackEx.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void displayPublicMenu() {
+        System.out.println("""
+                ---------- Public Menu --------------");
+                | 1 - Search for experts on Interest |
+                | 2 - View Own Interests             |
+                | 3 - Update Interest                |
+                | 4 - Quit                           |
+                --------------------------------------
+                """);
+        System.out.print("\n> Enter your choice: ");
+
+    }
+
+    private static void publicMenu(Connection connection, String email) {
+        int choice;
+        do {
+            displayPublicMenu();
+            choice = scanner.nextInt();
+            scanner.nextLine();
+
+            switch (choice) {
+                case 1:
+                    searchForInterest(connection);
+                    break;
+                case 2:
+                    viewSelfPublicInterest(connection, email);
+                    break;
+                case 3:
+                    updatePublicInterest(connection, email);
+                    break;
+                case 4:
+                    deletePublicInterest(connection, email);
+                    break;
+                case 5:
+                    System.out.println("Returning to main menu...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 4);
+    }
+
+    private static void searchForInterest(Connection connection) {
+        System.out.println("This has not been implemented yet.");
+    }
+
+    private static void viewSelfPublicInterest(Connection connection, String email) {
+        String sql = "SELECT i.interest FROM public p "
+                + "JOIN interests i ON p.interest_ID = i.interest_ID "
+                + "WHERE p.public_id = (SELECT public_id FROM public WHERE email = ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.print("\nYour Interest: ");
+            boolean hasInterests = false;
+            while (rs.next()) {
+                if (hasInterests) {
+                    System.out.print(rs.getString("interest"));
+                    hasInterests = true;
+                }
+            }
+            if (!hasInterests) {
+                System.out.println("No interests found.");
+            } else {
+                System.out.println();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void updatePublicInterest(Connection connection, String email) {
+        System.out.print("Enter new interest ID or ? to see the list of interests: ");
+        String interestId = scanner.nextLine();
+
+        if (interestId.equals("?")) {
+            displayAllInterests(connection);
+        } else if (0 < Integer.parseInt(interestId) && Integer.parseInt(interestId) < 14) {
+            String sql = "UPDATE public SET interest_ID = ? "
+                    + "WHERE public_id = (SELECT public_id FROM public WHERE email = ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+                pstmt.setInt(1, Integer.parseInt(interestId));
+                pstmt.setString(2, email);
+                int rowsAffected = pstmt.executeUpdate();
+
+                if (rowsAffected > 0) {
+                    System.out.println("Interest updated successfully!");
+                } else {
+                    System.out.println("No matching interest found to update.");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Sorry. That's not a valid option. Try again.");
+        }
+
+    }
+
+    private static void deletePublicInterest(Connection connection, String email) {
+        String sql = "UPDATE public SET interest_ID = null "
+                + "WHERE public_id = (SELECT public_id FROM public WHERE email = ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                System.out.println("Interest deleted successfully!");
+            } else {
+                System.out.println("No matching interest found to update.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // General Classes
     private static void displayAllInterests(Connection connection) {
         String sql = "SELECT interest_ID, interest FROM interests";
         try (PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
@@ -340,7 +510,7 @@ public class MainApplication {
         }
     }
 
-    private static void searchFacultyInterests(Connection connection, String email){
+    private static void searchFacultyInterests(Connection connection, String email) {
         String sql = """
             SELECT 
                 f.name AS faculty_name,
@@ -358,10 +528,10 @@ public class MainApplication {
             GROUP BY f.faculty_id, f.name, f.building, f.office, f.email
             ORDER BY f.name;
             """;
-                    
+
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, email);  
-            
+            pstmt.setString(1, email);
+
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (!rs.next()) {
                     System.out.println("No faculty found with common interests for this student.");
@@ -373,7 +543,7 @@ public class MainApplication {
                     String officeNumber = rs.getString("office_number");
                     String facultyEmail = rs.getString("faculty_email");
                     String commonInterests = rs.getString("common_interests");
-                    
+
                     System.out.println("Faculty Name: " + facultyName);
                     System.out.println("Building Number: " + buildingNumber);
                     System.out.println("Office Number: " + officeNumber);
@@ -381,7 +551,7 @@ public class MainApplication {
                     System.out.println("Common Interests: " + commonInterests);
                     System.out.println("----------------------------------------");
                 } while (rs.next());
-                
+
             } catch (SQLException e) {
                 System.out.println("Error executing query: " + e.getMessage());
             }
@@ -421,6 +591,7 @@ public class MainApplication {
             System.out.println("Error preparing statement: " + e.getMessage());
         }
     }
+
     private static void searchStudentInterests(Connection connection) {
         // Select statement for available interests
         String sql = """
@@ -429,16 +600,16 @@ public class MainApplication {
             """;
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 String interestID = String.valueOf(rs.getInt("interest_ID"));
                 String interest = rs.getString("interest");
                 System.out.println(interestID + " - " + interest);
             }
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println("Error preparing" + e.getMessage());
         }// end of interests statement
-        
+
         // Get interest ID input
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter Interest #: ");
@@ -479,7 +650,6 @@ public class MainApplication {
         } catch (SQLException e) {
             System.out.println("Error preparing statement:" + e.getMessage());
         }
-        
+
     }
 }
-
