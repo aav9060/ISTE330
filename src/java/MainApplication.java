@@ -170,7 +170,7 @@ public class MainApplication {
 
             switch (choice) {
                 case 1:
-                    searchFacultyInterests(connection, email);
+                    searchFacultyInterests(connection);
                     break;
                 case 2:
                     viewOwnStudentInterests(connection, email);
@@ -507,8 +507,27 @@ public class MainApplication {
         }
     }
 
-    private static void searchFacultyInterests(Connection connection, String email) {
-        String sql = 
+    private static void searchFacultyInterests(Connection connection) {
+        displayAllInterests(connection);
+
+        // Prompt the user to enter 1 to 3 interests
+        System.out.println("Please enter 1 to 3 interests (comma separated):");
+        String userInput = scanner.nextLine();
+        String[] interests = userInput.split(",");
+        
+        // store interests
+        for (int i = 0; i < interests.length; i++) {
+            interests[i] = interests[i].trim();
+        }
+
+        // Ensure the user entered at least 1 and at most 3 interests
+        if (interests.length < 1 || interests.length > 3) {
+            System.out.println("You must enter between 1 and 3 interests.");
+            return;
+        }
+
+        // SQL query
+        StringBuilder sql = new StringBuilder(
             "SELECT " +
             "f.name AS faculty_name, " +
             "f.building AS building_number, " +
@@ -519,19 +538,29 @@ public class MainApplication {
             "JOIN faculty_interests fi USING (faculty_id) " +
             "JOIN interests i USING (interest_id) " +
             "JOIN faculty_abstract fa USING (abstract_id) " +
-            "JOIN student_interests si USING (interest_id) " +
-            "JOIN students s USING (student_id) " +
-            "WHERE s.email = ? AND fa.abstract LIKE CONCAT('%', i.interest, '%') " +
-            "GROUP BY f.faculty_id, f.name, f.building, f.office, f.email " +
-            "ORDER BY f.name";
+            "WHERE i.interest LIKE ? ");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, email);
+        // Add more LIKE clauses for each interest (to allow for 1 to 3)
+        for (int i = 1; i < interests.length; i++) {
+            sql.append(" OR i.interest LIKE ? ");
+        }
+
+        sql.append("GROUP BY f.faculty_id, f.name, f.building, f.office, f.email " +
+                "ORDER BY f.name");
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < interests.length; i++) {
+                pstmt.setString(i + 1, interests[i]);  // Setting the LIKE clause
+            }
+
             try (ResultSet rs = pstmt.executeQuery()) {
+                // no faculty found
                 if (!rs.next()) {
                     System.out.println("No faculty found with common interests for this student.");
                     return;
                 }
+                // faculty found
                 do {
                     String facultyName = rs.getString("faculty_name");
                     String buildingNumber = rs.getString("building_number");
@@ -552,6 +581,7 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
+
 
     private static void searchFacultyAbstract(Connection connection) {
         String sql = 
