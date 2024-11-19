@@ -9,15 +9,10 @@ public class MainApplication {
 
     private static final Scanner scanner = new Scanner(System.in);
 
-
-
-
     /* 
       NO USER LOGGED IN 
       OPENING MENU : APPLICATION OPTIONS 
-    */
-    
-    
+     */
     public static void main(String[] args) {
         try (Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/faculty_research_group5", "root", "student")) {
@@ -38,7 +33,7 @@ public class MainApplication {
                     case 3:
                         searchFacultyAbstract(connection);
                         break;
-                        
+
                     case 4:
                         System.out.println("Exiting program. Goodbye!");
                         break;
@@ -51,9 +46,7 @@ public class MainApplication {
             System.out.println("Error: Unable to establish a database connection.");
             e.printStackTrace();
         }
-    }    
-    
-
+    }
 
     private static void displayMainMenu() {
         System.out.println("\n--- Faculty Research Project ---");
@@ -62,17 +55,12 @@ public class MainApplication {
         System.out.println("3 - Search Faculty Abstract Test");
         System.out.println("4 - Quit");
         System.out.print("Enter your choice: ");
-    }    
-    
-    
-    
-    
-    
+    }
+
     /* 
       OPENING MENU
       OPTION 1 LOGIN 
-    */
-    
+     */
     private static void login(Connection connection) {
         System.out.print("\nEnter Your Email: ");
         String email = scanner.nextLine();
@@ -95,7 +83,7 @@ public class MainApplication {
                     publicMenu(connection, email);
                 } else if ("Faculty".equalsIgnoreCase(userType)) {
                     facultyMenu(connection, email);
-                }else {
+                } else {
                     System.out.println("Other user type is not yet implemented.");
                 }
             } else {
@@ -106,20 +94,13 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-     /* 
+
+    /* 
       OPENING MENU
       OPTION 2 ADD
       SUB MENU : ADD A NEW USER 
       CHOOSE TYPE OF USER TO ADD
-    */
+     */
     private static void register(Connection connection) {
         System.out.println("\n--- Registration ---");
         System.out.println("1 - Faculty");
@@ -143,20 +124,13 @@ public class MainApplication {
                 System.out.println("Invalid user type. Returning to main menu.");
         }
     }
-    
-    
-    
-    
-    
-    
-    
-        
+
     /* 
       OPENING MENU
       OPTION 2 ADD
       SUB MENU : ADD A NEW USER 
       OPTION 2 REGISTER STUDENT
-    */
+     */
     private static void registerStudent(Connection connection) {
         System.out.print("\nEnter Your Full Name: ");
         String name = scanner.nextLine();
@@ -211,16 +185,11 @@ public class MainApplication {
             }
         }
     }
-    
-    
-    
-    
-       
+
     /* 
       STUDENT LOGGED IN 
       USER MENU : STUDENT OPTIONS 
-    */
-        
+     */
     private static void studentMenu(Connection connection, String email) {
         int choice;
         do {
@@ -252,11 +221,7 @@ public class MainApplication {
             }
         } while (choice != 6);
     }
-    
-    
-    
-    
-    
+
     private static void displayStudentMenu() {
         System.out.println("\n--- Student Menu ---");
         System.out.println("1 - Search Faculty Interests");
@@ -266,17 +231,12 @@ public class MainApplication {
         System.out.println("5 - Update Interests");
         System.out.println("6 - Quit");
         System.out.print("Enter your choice: ");
-    }    
-    
-    
-    
-    
-    
-    
+    }
+
     /* 
       STUDENT 
       VIEW OWN INTERESTS 
-    */
+     */
     private static void viewOwnStudentInterests(Connection connection, String email) {
         String sql = "SELECT i.interest FROM student_interests si "
                 + "JOIN interests i ON si.interest_ID = i.interest_ID "
@@ -303,17 +263,12 @@ public class MainApplication {
             System.out.println("Error fetching student interests.");
             e.printStackTrace();
         }
-    }    
-    
-    
-    
-    
-    
-    
+    }
+
     /* 
       STUDENT 
       ADD TO OWN INTERESTS 
-    */
+     */
     private static void addStudentInterest(Connection connection, String email) {
         while (true) {
             System.out.print("Enter the Interest ID to Add (or type '?' to see available interests): ");
@@ -348,16 +303,11 @@ public class MainApplication {
             }
         }
     }
-    
-    
-    
-    
-        
-    
+
     /* 
       STUDENT 
       DELETE OWN INTERESTS 
-    */
+     */
     private static void deleteStudentInterest(Connection connection, String email) {
         System.out.print("Enter the Interest ID to Delete: ");
         int interestId = scanner.nextInt();
@@ -380,22 +330,11 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
 
     /* 
       STUDENT 
       UPDATE OWN INTERESTS 
-    */
-
+     */
     private static void updateStudentInterest(Connection connection, String email) {
         System.out.print("Enter the Old Interest ID to Update: ");
         int oldInterestId = scanner.nextInt();
@@ -423,22 +362,10 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-   
     /* 
       PUBLIC LOGGED IN 
       USER MENU : PUBLIC OPTIONS 
-    */
-
+     */
     private static void displayPublicMenu() {
         System.out.println("\n--- Public Menu ---");
         System.out.println("1 - Search for Experts on Interest");
@@ -477,18 +404,13 @@ public class MainApplication {
             }
         } while (choice != 5);
     }
-    
-    
-    
-    
-        
+
     /* 
       OPENING MENU
       OPTION 2 ADD
       SUB MENU : ADD A NEW USER 
       OPTION 3 REGISTER PUBLIC
-    */
-
+     */
     private static void registerPublic(Connection connection) {
         System.out.print("\nEnter Your Name or Your Business's Name: ");
         String name = scanner.nextLine();
@@ -536,15 +458,10 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
     /* 
       PUBLIC 
       VIEW OWN INTERESTS 
-    */
+     */
     private static void viewSelfPublicInterest(Connection connection, String email) {
         String sql = "SELECT i.interest FROM public p "
                 + "JOIN interests i ON p.interest_ID = i.interest_ID "
@@ -572,19 +489,11 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
-    
-    
-    
-    
-    
-    
-    
 
     /* 
       PUBLIC 
       UPDATE OWN INTERESTS 
-    */
-
+     */
     private static void updatePublicInterest(Connection connection, String email) {
         System.out.print("Enter new Interest ID or '?' to see the list of interests: ");
         String interestId = scanner.nextLine();
@@ -616,18 +525,10 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
     /* 
       PUBLIC 
       DELETE OWN INTERESTS 
-    */
+     */
     private static void deletePublicInterest(Connection connection, String email) {
         String sql = "UPDATE public SET interest_ID = NULL "
                 + "WHERE public_id = (SELECT public_id FROM public WHERE email = ?)";
@@ -646,18 +547,12 @@ public class MainApplication {
         }
     }
 
-
-    
- 
-    
-    
-    
     /* 
       OPENING MENU
       OPTION 2 ADD
       SUB MENU : ADD A NEW USER 
       OPTION 1 REGISTER FACULTY MEMBER
-    */
+     */
     private static void registerFaculty(Connection connection) {
         System.out.print("\nEnter Your Full Name: ");
         String name = scanner.nextLine();
@@ -674,10 +569,10 @@ public class MainApplication {
         System.out.print("Enter Your Abstract ID (press enter for no abstracts): ");
         String abstractIdInput = scanner.nextLine();
         Integer abstractId = abstractIdInput.isEmpty() ? null : Integer.parseInt(abstractIdInput);
-    
+
         try {
             connection.setAutoCommit(false);
-    
+
             // Insert into account table
             String insertAccount = "INSERT INTO account (email, password, type) VALUES (?, ?, 'Faculty')";
             try (PreparedStatement pstmtAccount = connection.prepareStatement(insertAccount)) {
@@ -685,7 +580,7 @@ public class MainApplication {
                 pstmtAccount.setString(2, password);
                 pstmtAccount.executeUpdate();
             }
-    
+
             // Insert into faculty table
             String insertFaculty = "INSERT INTO faculty (name, abstract_id, department, building, office, email, password) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement pstmtFaculty = connection.prepareStatement(insertFaculty)) {
@@ -698,7 +593,7 @@ public class MainApplication {
                 pstmtFaculty.setString(7, password);
                 pstmtFaculty.executeUpdate();
             }
-    
+
             connection.commit();
             System.out.println("Faculty registration successful!");
         } catch (SQLException e) {
@@ -715,20 +610,12 @@ public class MainApplication {
                 System.out.println("Failed to set auto commit. Error: " + ex.getMessage());
             }
         }
-    }    
-    
-    
-    
-    
-    
-    
-    
-    
-     /* 
+    }
+
+    /* 
       FACULTY MEMBER LOGGED IN 
       USER MENU : FACULTY MEMBER OPTIONS 
-    */
-    
+     */
     private static void displayFacultyMenu() {
         System.out.println("\n--- Faculty Menu ---");
         System.out.println("1 - Search Student Interests");
@@ -739,11 +626,7 @@ public class MainApplication {
         System.out.println("6 - See Own Abstracts");
         System.out.println("7 - Quit");
     }
-    
-    
-    
-    
-    
+
     public static void facultyMenu(Connection connection, String email) {
         int choice;
         do {
@@ -770,7 +653,7 @@ public class MainApplication {
                     break;
                 case 6:
                     seeFacultyAbstracts(connection, email);
-                    break;                                      
+                    break;
                 case 7:
                     System.out.println("Logging out and returning to main menu...");
                     break;
@@ -781,20 +664,10 @@ public class MainApplication {
         } while (choice != 7);
     }
 
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MENU
       SUB MENU : INSERT ABSTRACTS OR INTERESTS MENU
-    */
+     */
     private static void insertFacultyAbstractsOrInterests(Connection connection) {
         System.out.println("\nChoose an option:");
         System.out.println("1 - Insert an Abstract");
@@ -816,17 +689,12 @@ public class MainApplication {
         }
     }
 
-
-
-
-    
-    
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 1
       SUB MENU : INSERT ABSTRACTS OR INTERESTS 
       OPTION 1 INSERT ABSTRACTS
-    */
+     */
     private static void insertFacultyAbstract(Connection connection) {
         System.out.print("Enter title: ");
         String title = scanner.nextLine();
@@ -847,24 +715,12 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 1
       SUB MENU : INSERT ABSTRACTS OR INTERESTS 
       OPTION 2 INSERT INTERESTS
-    */
+     */
     private static void insertFacultyInterest(Connection connection) {
         System.out.print("Enter interest: ");
         String interest = scanner.nextLine();
@@ -882,19 +738,11 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 2
       SUB MENU : UPDATE ABSTRACTS OR INTERESTS 
-    */
+     */
     private static void updateFacultyAbstractsOrInterests(Connection connection) {
         System.out.println("\nChoose an option:");
         System.out.println("1 - Update an Abstract");
@@ -915,21 +763,13 @@ public class MainApplication {
                 break;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 2
       SUB MENU : UPDATE ABSTRACTS OR INTERESTS 
       OPTION 1 UPDATE ABSTRACTS
-    */
+     */
     private static void updateFacultyAbstract(Connection connection) {
         System.out.print("Enter Abstract ID: ");
         int abstractId = scanner.nextInt();
@@ -956,19 +796,12 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 2
       SUB MENU : UPDATE ABSTRACTS OR INTERESTS 
       OPTION 2 UPDATE INTERESTS
-    */
+     */
     private static void updateFacultyInterest(Connection connection) {
         System.out.print("Enter Interest ID: ");
         int interestId = scanner.nextInt();
@@ -992,22 +825,11 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 3
       SUB MENU : DELETE ABSTRACTS OR INTERESTS
-    */
+     */
     private static void deleteFacultyAbstractsOrInterests(Connection connection) {
         System.out.println("\nChoose an option:");
         System.out.println("1 - Delete an Abstract");
@@ -1029,24 +851,12 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 3
       SUB MENU : DELETE ABSTRACTS OR INTERESTS 
       OPTION 1 DELETE ABSTRACTS
-    */
+     */
     private static void deleteFacultyAbstract(Connection connection) {
         System.out.print("Enter Abstract ID: ");
         int abstractId = scanner.nextInt();
@@ -1066,26 +876,12 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 3
       SUB MENU : DELETE ABSTRACTS OR INTERESTS 
       OPTION 2 DELETE INTERESTS
-    */
+     */
     private static void deleteFacultyInterest(Connection connection) {
         System.out.print("Enter Interest ID: ");
         int interestId = scanner.nextInt();
@@ -1105,26 +901,17 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 4
       VIEW OWN INTERESTS
-    */
+     */
     private static void seeFacultyInterests(Connection connection, String email) {
-        String sql = "SELECT GROUP_CONCAT(interests.interest SEPARATOR ' | ') AS interests_list " +
-                     "FROM interests " +
-                     "JOIN faculty_interests ON interests.interest_ID = faculty_interests.interest_ID " +
-                     "JOIN faculty ON faculty.faculty_id = faculty_interests.faculty_ID " +
-                     "WHERE faculty.email = ?";
+        String sql = "SELECT GROUP_CONCAT(interests.interest SEPARATOR ' | ') AS interests_list "
+                + "FROM interests "
+                + "JOIN faculty_interests ON interests.interest_ID = faculty_interests.interest_ID "
+                + "JOIN faculty ON faculty.faculty_id = faculty_interests.faculty_ID "
+                + "WHERE faculty.email = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
@@ -1144,35 +931,17 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY MEMBER
       FACULTY MENU : OPTION 5
       VIEW OWN ABSTRACTS
-    */
+     */
     private static void seeFacultyAbstracts(Connection connection, String email) {
         System.out.println("\n--- View Your Abstracts ---");
-        String sql = "SELECT faculty_abstract.abstract_ID, title, abstract " +
-                     "FROM faculty_abstract " +
-                     "JOIN faculty ON faculty.abstract_id = faculty_abstract.abstract_ID " +
-                     "WHERE faculty.email = ?";
+        String sql = "SELECT faculty_abstract.abstract_ID, title, abstract "
+                + "FROM faculty_abstract "
+                + "JOIN faculty ON faculty.abstract_id = faculty_abstract.abstract_ID "
+                + "WHERE faculty.email = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
@@ -1193,25 +962,14 @@ public class MainApplication {
             System.out.println("Failed to retrieve abstracts: " + e.getMessage());
             e.printStackTrace();
         }
-    }                 
-
-
-
-
-
-
-
-/* END OF USER FUNCTIONS, START OF SEARCH MATCH FUNCTIONS */
-
-
-
-
-
-    /* 
+    
+    }
+    /* END OF USER FUNCTIONS, START OF SEARCH MATCH FUNCTIONS */
+ /* 
       PUBLIC 
       SEARCH FOR FACULTY MEMBERS WITH SPECIFIC INTERESTS
       INPUT INTERESTS OUTPUT FACULTY MEMBERS LIST [NAME, EMAIL]
-    */
+     */
     private static void searchForInterest(Connection connection) {
         displayAllInterests(connection);
         System.out.print("Enter the Interest ID to search: ");
@@ -1242,19 +1000,11 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
     /* 
       STUDENT 
       SEARCH FOR FACULTY MEMBERS WITH SPECIFIC INTERESTS
       INPUT INTERESTS OUTPUT FACULTY MEMBERS LIST [NAME, BUILDING, OFFICE, EMAIL, COMMON INTERESTS]
-    */
+     */
     private static void searchFacultyInterests(Connection connection) {
         displayAllInterests(connection);
 
@@ -1262,7 +1012,7 @@ public class MainApplication {
         System.out.println("Please enter 1 to 3 interests (comma separated):");
         String userInput = scanner.nextLine();
         String[] interests = userInput.split(",");
-        
+
         // store interests
         for (int i = 0; i < interests.length; i++) {
             interests[i] = interests[i].trim();
@@ -1276,25 +1026,25 @@ public class MainApplication {
 
         // SQL query
         StringBuilder sql = new StringBuilder(
-            "SELECT " +
-            "f.name AS faculty_name, " +
-            "f.building AS building_number, " +
-            "f.office AS office_number, " +
-            "f.email AS faculty_email, " +
-            "GROUP_CONCAT(i.interest ORDER BY i.interest) AS common_interests " +
-            "FROM faculty f " +
-            "JOIN faculty_interests fi USING (faculty_id) " +
-            "JOIN interests i USING (interest_id) " +
-            "JOIN faculty_abstract fa USING (abstract_id) " +
-            "WHERE i.interest LIKE ? ");
+                "SELECT "
+                + "f.name AS faculty_name, "
+                + "f.building AS building_number, "
+                + "f.office AS office_number, "
+                + "f.email AS faculty_email, "
+                + "GROUP_CONCAT(i.interest ORDER BY i.interest) AS common_interests "
+                + "FROM faculty f "
+                + "JOIN faculty_interests fi USING (faculty_id) "
+                + "JOIN interests i USING (interest_id) "
+                + "JOIN faculty_abstract fa USING (abstract_id) "
+                + "WHERE i.interest LIKE ? ");
 
         // Add more LIKE clauses for each interest (to allow for 1 to 3)
         for (int i = 1; i < interests.length; i++) {
             sql.append(" OR i.interest LIKE ? ");
         }
 
-        sql.append("GROUP BY f.faculty_id, f.name, f.building, f.office, f.email " +
-                "ORDER BY f.name");
+        sql.append("GROUP BY f.faculty_id, f.name, f.building, f.office, f.email "
+                + "ORDER BY f.name");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
 
@@ -1330,36 +1080,24 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       OPENING MENU OPTION 3
       SEARCH FACULTY ABSTRACTS WITH TERMS
       INPUT SEARCH TERM OUTPUT FACULTY MEMBERS WHO HAVE RELATED ABSTRACT(S) LIST [NAME]
-    */
+     */
     private static void searchFacultyAbstract(Connection connection) {
-        String sql = 
-            "SELECT " +
-            "f.name AS faculty_name " +
-            "FROM faculty f " +
-            "JOIN faculty_abstract fa USING (abstract_id) " +
-            "WHERE fa.abstract LIKE ? " +
-            "ORDER BY f.name";
+        String sql
+                = "SELECT "
+                + "f.name AS faculty_name "
+                + "FROM faculty f "
+                + "JOIN faculty_abstract fa USING (abstract_id) "
+                + "WHERE fa.abstract LIKE ? "
+                + "ORDER BY f.name";
 
         // Get user input for search term
         System.out.print("Enter search term: ");
         String searchTerm = scanner.next();
-        scanner.nextLine(); 
+        scanner.nextLine();
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + searchTerm + "%");
@@ -1381,25 +1119,11 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       FACULTY 
       SEARCH FOR STUDENTS WITH SPECIFIC INTERESTS
       INPUT INTERESTS OUTPUT STUDENTS LIST [NAME, EMAIL, PHONE]
-    */
+     */
     private static void searchStudentInterests(Connection connection) {
         String sql = "SELECT interest_ID, interest FROM interests";
         try (PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
@@ -1416,13 +1140,13 @@ public class MainApplication {
 
         System.out.print("Enter Interest ID to search for students: ");
         int interestId = scanner.nextInt();
-        scanner.nextLine(); 
+        scanner.nextLine();
 
-        String sql1 = 
-            "SELECT s.name, s.email, s.phone " +
-            "FROM students s " +
-            "JOIN student_interests si ON s.student_id = si.student_id " +
-            "WHERE si.interest_ID = ?";
+        String sql1
+                = "SELECT s.name, s.email, s.phone "
+                + "FROM students s "
+                + "JOIN student_interests si ON s.student_id = si.student_id "
+                + "WHERE si.interest_ID = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql1)) {
             pstmt.setInt(1, interestId);
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -1444,21 +1168,9 @@ public class MainApplication {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     /* 
       DISPLAY ALL INTERESTS
-    */
+     */
     private static void displayAllInterests(Connection connection) {
         String sql = "SELECT interest_ID, interest FROM interests";
         try (PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
@@ -1473,7 +1185,9 @@ public class MainApplication {
             e.printStackTrace();
         }
     }
-}    
+}
+
+    
     
     
     
