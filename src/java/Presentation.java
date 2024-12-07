@@ -51,56 +51,7 @@ public class Presentation {
                         System.out.print("Choose user type: ");
                         int userType = scanner.nextInt();
                         scanner.nextLine(); // Consume newline
-                        switch (userType) {
-                            case 1:
-                                System.out.print("\nEnter Your Full Name: ");
-                                String name = scanner.nextLine();
-                                System.out.print("Enter Your Department: ");
-                                String department = scanner.nextLine();
-                                System.out.print("Enter Your Building: ");
-                                String building = scanner.nextLine();
-                                System.out.print("Enter Your Office Number: ");
-                                String office = scanner.nextLine();
-                                System.out.print("Enter Your Faculty Email: ");
-                                email = scanner.nextLine();
-                                System.out.print("Enter Your Password: ");
-                                password = scanner.nextLine();
-                                System.out.print("Enter Your Abstract ID (press enter for no abstracts): ");
-                                String abstractIdInput = scanner.nextLine();
-                                Integer abstractId = abstractIdInput.isEmpty() ? null : Integer.parseInt(abstractIdInput);
-                                dl.registerFaculty(name, department, building, office, email, password, abstractId);
-                                break;
-                            case 2:
-                                System.out.print("\nEnter Your Full Name: ");
-                                name = scanner.nextLine();
-                                System.out.print("Enter Your Address: ");
-                                String address = scanner.nextLine();
-                                System.out.print("Enter Your Phone Number: ");
-                                String phone = scanner.nextLine();
-                                System.out.print("Enter Your Student Email: ");
-                                email = scanner.nextLine();
-                                System.out.print("Enter Your Password: ");
-                                password = scanner.nextLine();
-                                System.out.print("Enter Your Major: ");
-                                String major = scanner.nextLine();
-                                System.out.print("Enter Your Year: ");
-                                String year = scanner.nextLine();
-                                dl.registerStudent(name, address, phone, email, password, major, year);
-                                break;
-                            case 3:
-                                System.out.print("\nEnter Your Name or Your Business's Name: ");
-                                name = scanner.nextLine();
-                                System.out.print("Enter Your Address: ");
-                                address = scanner.nextLine();
-                                System.out.print("Enter Your Email: ");
-                                email = scanner.nextLine();
-                                System.out.print("Enter Your Password: ");
-                                password = scanner.nextLine();
-                                dl.registerPublic(name, address, email, password);
-                                break;
-                            default:
-                                System.out.println("Invalid user type. Returning to main menu.");
-                        }
+                        register(userType);
                         break;
                     case 3:
                         System.out.println("Exiting program. Goodbye!");
@@ -123,6 +74,59 @@ public class Presentation {
         System.out.println("2 - Register");
         System.out.println("3 - Quit");
         System.out.print("Enter your choice: ");
+    }
+
+    private void register(int userType){
+        switch (userType) {
+            case 1:
+                System.out.print("\nEnter Your Full Name: ");
+                String name = scanner.nextLine();
+                System.out.print("Enter Your Department: ");
+                String department = scanner.nextLine();
+                System.out.print("Enter Your Building: ");
+                String building = scanner.nextLine();
+                System.out.print("Enter Your Office Number: ");
+                String office = scanner.nextLine();
+                System.out.print("Enter Your Faculty Email: ");
+                String email = scanner.nextLine();
+                System.out.print("Enter Your Password: ");
+                String password = scanner.nextLine();
+                System.out.print("Enter Your Abstract ID (press enter for no abstracts): ");
+                String abstractIdInput = scanner.nextLine();
+                Integer abstractId = abstractIdInput.isEmpty() ? null : Integer.parseInt(abstractIdInput);
+                dl.registerFaculty(name, department, building, office, email, password, abstractId);
+                break;
+            case 2:
+                System.out.print("\nEnter Your Full Name: ");
+                name = scanner.nextLine();
+                System.out.print("Enter Your Address: ");
+                String address = scanner.nextLine();
+                System.out.print("Enter Your Phone Number: ");
+                String phone = scanner.nextLine();
+                System.out.print("Enter Your Student Email: ");
+                email = scanner.nextLine();
+                System.out.print("Enter Your Password: ");
+                password = scanner.nextLine();
+                System.out.print("Enter Your Major: ");
+                String major = scanner.nextLine();
+                System.out.print("Enter Your Year: ");
+                String year = scanner.nextLine();
+                dl.registerStudent(name, address, phone, email, password, major, year);
+                break;
+            case 3:
+                System.out.print("\nEnter Your Name or Your Business's Name: ");
+                name = scanner.nextLine();
+                System.out.print("Enter Your Address: ");
+                address = scanner.nextLine();
+                System.out.print("Enter Your Email: ");
+                email = scanner.nextLine();
+                System.out.print("Enter Your Password: ");
+                password = scanner.nextLine();
+                dl.registerPublic(name, address, email, password);
+                break;
+            default:
+                System.out.println("Invalid user type. Returning to main menu.");
+        }
     }
 
     public static void main(String [] args){
