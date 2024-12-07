@@ -61,7 +61,7 @@ case 7 (Quit) will allow the faculty user to exit from this menu which will lead
 PUBLIC CRUD FUNCTIONS:
 
 If a public user successfully logs in, they will now have five options
-case 1 (Search for Experts on Interest) will allow public user to search for a faculty based on the interest that they have selected from a drop-down list
+case 1 (Search for Experts on Interest) will allow public users to search for both students and/or faculty based on the interest that they have selected from a drop-down list
 case 2 (View Own Interests) will allow the public user to see their own interests.
 case 3 (Update Interest) will allow the public user to update their own interests.
 case 4 (Delete Interest) will allow the public user to delete their own interests.
