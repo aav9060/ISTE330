@@ -59,15 +59,15 @@ public class MainApplication {
                 String userType = rs.getString("type");
                 System.out.println("Login successful! Welcome, " + userType + ".");
 
-                if ("Student".equalsIgnoreCase(userType)) {
-                    studentMenu(email);
-                } else if ("Public".equalsIgnoreCase(userType)) {
-                    publicMenu(email);
-                } else if ("Faculty".equalsIgnoreCase(userType)) {
-                    facultyMenu(email);
-                } else {
-                    System.out.println("Other user type is not yet implemented.");
-                }
+                // if ("Student".equalsIgnoreCase(userType)) {
+                //     studentMenu(email);
+                // } else if ("Public".equalsIgnoreCase(userType)) {
+                //     publicMenu(email);
+                // } else if ("Faculty".equalsIgnoreCase(userType)) {
+                //     facultyMenu(email);
+                // } else {
+                //     System.out.println("Other user type is not yet implemented.");
+                // }
                 return userType;
             } else {
                 System.out.println("Invalid email or password. Please try again.");
@@ -124,57 +124,6 @@ public class MainApplication {
                 ex.printStackTrace();
             }
         }
-    }
-
-    /* 
-      STUDENT LOGGED IN 
-      USER MENU : STUDENT OPTIONS 
-     */
-    public static void studentMenu(String email) {
-        int choice;
-        do {
-            displayStudentMenu();
-            choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    searchFacultyInterests();
-                    break;
-                case 2:
-                    searchFacultyAbstract();
-                    break;
-                case 3:
-                    viewOwnStudentInterests( email);
-                    break;
-                case 4:
-                    addStudentInterest( email);
-                    break;
-                case 5:
-                    deleteStudentInterest( email);
-                    break;
-                case 6:
-                    updateStudentInterest( email);
-                    break;
-                case 7:
-                    System.out.println("Returning to main menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        } while (choice != 7);
-    }
-
-    public static void displayStudentMenu() {
-        System.out.println("\n--- Student Menu ---");
-        System.out.println("1 - Search Faculty Interests");
-        System.out.println("2 - Search Faculty Abstracts");
-        System.out.println("3 - View Own Interests");
-        System.out.println("4 - Add Interests");
-        System.out.println("5 - Delete Interests");
-        System.out.println("6 - Update Interests");
-        System.out.println("7 - Quit");
-        System.out.print("Enter your choice: ");
     }
 
     /* 
@@ -306,36 +255,6 @@ public class MainApplication {
         }
     }
 
-    /* 
-      PUBLIC LOGGED IN 
-      USER MENU : PUBLIC OPTIONS 
-     */
-    public static void displayPublicMenu() {
-        System.out.println("\n--- Public Menu ---");
-        System.out.println("1 - Search for Experts on Interest");
-        System.out.println("2 - Quit");
-        System.out.print("Enter your choice: ");
-    }
-
-    public static void publicMenu(String email) {
-        int choice;
-        do {
-            displayPublicMenu();
-            choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline
-
-            switch (choice) {
-                case 1:
-                    searchForInterest();
-                    break;
-                case 2:
-                    System.out.println("Returning to main menu...");
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
-            }
-        } while (choice != 2);
-    }
 
     /* 
       OPENING MENU
@@ -520,57 +439,7 @@ public class MainApplication {
         }
     }
 
-    /* 
-      FACULTY MEMBER LOGGED IN 
-      USER MENU : FACULTY MEMBER OPTIONS 
-     */
-    public static void displayFacultyMenu() {
-        System.out.println("\n--- Faculty Menu ---");
-        System.out.println("1 - Search Student Interests");
-        System.out.println("2 - Insert Abstracts or Interests");
-        System.out.println("3 - Update Abstracts or Interests");
-        System.out.println("4 - Delete Abstracts or Interests");
-        System.out.println("5 - See Own Interests");
-        System.out.println("6 - See Own Abstracts");
-        System.out.println("7 - Quit");
-    }
-
-   public static void facultyMenu(String email) {
-       int choice;
-       do {
-           displayFacultyMenu();
-           System.out.print("Enter your choice: ");
-           choice = scanner.nextInt();
-           scanner.nextLine(); // Consume newline
-   
-           switch (choice) {
-               case 1:
-                   searchStudentInterests();
-                   break;
-               case 2:
-                   insertFacultyAbstractsOrInterests( email);
-                   break;
-               case 3:
-                   updateFacultyAbstractsOrInterests();
-                   break;
-               case 4:
-                   deleteFacultyAbstractsOrInterests();
-                   break;
-               case 5:
-                   seeFacultyInterests( email);
-                   break;
-               case 6:
-                   seeFacultyAbstracts( email);
-                   break;
-               case 7:
-                   System.out.println("Logging out and returning to main menu...");
-                   break;
-               default:
-                   System.out.println("Invalid choice. Please try again.");
-                   break;
-           }
-       } while (choice != 7);
-   }
+    
     /* 
       FACULTY MENU
       SUB MENU : INSERT ABSTRACTS OR INTERESTS MENU

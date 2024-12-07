@@ -41,7 +41,9 @@ public class Presentation {
                         String email = scanner.nextLine();
                         System.out.print("Enter Your Password: ");
                         String password = scanner.nextLine();
-                        dl.login(email, password);
+                        String loginType = dl.login(email, password);
+                        loginType = loginType.toLowerCase();
+                        loginDisplay(loginType, email);
                         break;
                     case 2:
                         System.out.println("\n--- Registration ---");
@@ -128,6 +130,128 @@ public class Presentation {
                 System.out.println("Invalid user type. Returning to main menu.");
         }
     }
+
+    private void loginDisplay(String userType, String email){
+        switch (userType){
+            case "student":
+                int choice;
+                do {
+                    displayStudentMenu();
+                    choice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+                    switch (choice) {
+                        case 1:
+                            dl.searchFacultyInterests();
+                            break;
+                        case 2:
+                            dl.searchFacultyAbstract();
+                            break;
+                        case 3:
+                            dl.viewOwnStudentInterests( email);
+                            break;
+                        case 4:
+                            dl.addStudentInterest( email);
+                            break;
+                        case 5:
+                            dl.deleteStudentInterest( email);
+                            break;
+                        case 6:
+                            dl.updateStudentInterest( email);
+                            break;
+                        case 7:
+                            System.out.println("Returning to main menu...");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                    }
+                } while (choice != 7);
+                break;
+            case "faculty":
+                do {
+                    displayFacultyMenu();
+                    System.out.print("Enter your choice: ");
+                    choice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+            
+                    switch (choice) {
+                        case 1:
+                            dl.searchStudentInterests();
+                            break;
+                        case 2:
+                            dl.insertFacultyAbstractsOrInterests( email);
+                            break;
+                        case 3:
+                            dl.updateFacultyAbstractsOrInterests();
+                            break;
+                        case 4:
+                            dl.deleteFacultyAbstractsOrInterests();
+                            break;
+                        case 5:
+                            dl.seeFacultyInterests( email);
+                            break;
+                        case 6:
+                            dl.seeFacultyAbstracts( email);
+                            break;
+                        case 7:
+                            System.out.println("Logging out and returning to main menu...");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                            break;
+                    }
+                } while (choice != 7);
+                break;
+            case "public":
+                do {
+                    displayPublicMenu();
+                    choice = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline
+
+                    switch (choice) {
+                        case 1:
+                            dl.searchForInterest();
+                            break;
+                        case 2:
+                            System.out.println("Returning to main menu...");
+                            break;
+                        default:
+                            System.out.println("Invalid choice. Please try again.");
+                    }
+                } while (choice != 2);
+                break;
+        }
+    }
+
+    public void displayStudentMenu() {
+        System.out.println("\n--- Student Menu ---");
+        System.out.println("1 - Search Faculty Interests");
+        System.out.println("2 - Search Faculty Abstracts");
+        System.out.println("3 - View Own Interests");
+        System.out.println("4 - Add Interests");
+        System.out.println("5 - Delete Interests");
+        System.out.println("6 - Update Interests");
+        System.out.println("7 - Quit");
+        System.out.print("Enter your choice: ");
+    }
+
+    public void displayFacultyMenu() {
+        System.out.println("\n--- Faculty Menu ---");
+        System.out.println("1 - Search Student Interests");
+        System.out.println("2 - Insert Abstracts or Interests");
+        System.out.println("3 - Update Abstracts or Interests");
+        System.out.println("4 - Delete Abstracts or Interests");
+        System.out.println("5 - See Own Interests");
+        System.out.println("6 - See Own Abstracts");
+        System.out.println("7 - Quit");
+    }
+
+    public void displayPublicMenu() {
+        System.out.println("\n--- Public Menu ---");
+        System.out.println("1 - Search for Experts on Interest");
+        System.out.println("2 - Quit");
+        System.out.print("Enter your choice: ");
+    }
+    
 
     public static void main(String [] args){
 	    System.out.println("Authors: Alex Vasilcoiu, Noella Abraham, Sondos Sosak, Daniyah Wong, Jason Wu");
