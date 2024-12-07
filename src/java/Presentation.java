@@ -247,7 +247,7 @@ public class Presentation {
 
     public void displayPublicMenu() {
         System.out.println("\n--- Public Menu ---");
-        System.out.println("1 - Search for Experts on Interest");
+        System.out.println("1 - Search for students on Interest");
         System.out.println("2 - Quit");
         System.out.print("Enter your choice: ");
     }

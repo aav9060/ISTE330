@@ -764,14 +764,14 @@ public class MainApplication {
         int interestId = scanner.nextInt();
         scanner.nextLine(); // Consume newline
 
-        String sql = "SELECT f.name, f.email FROM faculty_interests fi "
-                + "JOIN faculty f ON fi.faculty_id = f.faculty_id "
-                + "WHERE fi.interest_ID = ?";
+        String sql = "SELECT s.name, s.email FROM student_interests si "
+                + "JOIN students s USING (student_id) "
+                + "WHERE si.interest_ID = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, interestId);
             ResultSet rs = pstmt.executeQuery();
 
-            System.out.println("\nExperts on this Interest:");
+            System.out.println("\nStudents on this Interest:");
             boolean found = false;
             while (rs.next()) {
                 String name = rs.getString("name");
@@ -780,7 +780,29 @@ public class MainApplication {
                 found = true;
             }
             if (!found) {
-                System.out.println("No experts found for this interest.");
+                System.out.println("No students found for this interest.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error searching for experts.");
+            e.printStackTrace();
+        }
+        String sql2 = "SELECT f.name, f.email FROM faculty_interests fi "
+                + "JOIN faculty f USING (faculty_id) "
+                + "WHERE fi.interest_ID = ?";
+        try (PreparedStatement pstmt2 = conn.prepareStatement(sql2)) {
+            pstmt2.setInt(1, interestId);
+            ResultSet rs = pstmt2.executeQuery();
+
+            System.out.println("\nFaculty on this Interest:");
+            boolean found = false;
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String email = rs.getString("email");
+                System.out.println("Name: " + name + ", Email: " + email);
+                found = true;
+            }
+            if (!found) {
+                System.out.println("No Faculty found for this interest.");
             }
         } catch (SQLException e) {
             System.out.println("Error searching for experts.");
